@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="CinemaSeatLayout" customModule="MyCustomCollectionView" customModuleProvider="target">
+            <connections>
+                <outlet property="leftGuideView" destination="bbe-XG-auv" id="paa-o0-dKt"/>
+                <outlet property="rightGuideView" destination="PWL-EF-cIh" id="THv-P3-OaU"/>
+                <outlet property="seatScrollView" destination="fsA-31-TA4" id="Nqz-Kc-1gc"/>
+                <outlet property="seatView" destination="sXA-13-QkQ" id="QDA-QL-AGX"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fsA-31-TA4">
+                    <rect key="frame" x="30" y="68" width="305" height="305"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sXA-13-QkQ" customClass="CinemaSeatView" customModule="MyCustomCollectionView" customModuleProvider="target">
+                            <rect key="frame" x="0.0" y="0.0" width="304" height="304"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        </view>
+                    </subviews>
+                    <constraints>
+                        <constraint firstItem="sXA-13-QkQ" firstAttribute="leading" secondItem="fsA-31-TA4" secondAttribute="leading" id="1Dx-6b-n9Q"/>
+                        <constraint firstAttribute="trailing" secondItem="sXA-13-QkQ" secondAttribute="trailing" id="1vI-No-l7h"/>
+                        <constraint firstAttribute="bottom" secondItem="sXA-13-QkQ" secondAttribute="bottom" id="9e5-Xf-hCf"/>
+                        <constraint firstItem="sXA-13-QkQ" firstAttribute="centerY" secondItem="fsA-31-TA4" secondAttribute="centerY" id="A0w-G2-Ih2"/>
+                        <constraint firstItem="sXA-13-QkQ" firstAttribute="top" secondItem="fsA-31-TA4" secondAttribute="top" id="fkd-yP-8dr"/>
+                        <constraint firstAttribute="width" secondItem="fsA-31-TA4" secondAttribute="height" multiplier="1:1" id="vN8-VX-RgN"/>
+                        <constraint firstItem="sXA-13-QkQ" firstAttribute="centerX" secondItem="fsA-31-TA4" secondAttribute="centerX" id="zTc-ln-3vP"/>
+                    </constraints>
+                </scrollView>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="bbe-XG-auv" customClass="CinemaGuideView" customModule="MyCustomCollectionView" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="68" width="30" height="305"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PWL-EF-cIh" customClass="CinemaGuideView" customModule="MyCustomCollectionView" customModuleProvider="target">
+                    <rect key="frame" x="335" y="68" width="40" height="305"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AdX-jx-GF7" customClass="CinemaScreenView" customModule="MyCustomCollectionView" customModuleProvider="target">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="68"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="fsA-31-TA4" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="30" id="3G6-Is-D5e"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="fsA-31-TA4" secondAttribute="trailing" constant="40" id="4v0-eV-HaF"/>
+                <constraint firstItem="PWL-EF-cIh" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="6bz-o7-H7j"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="AdX-jx-GF7" secondAttribute="trailing" id="JBi-lq-srv"/>
+                <constraint firstItem="AdX-jx-GF7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="aKW-4V-AkW"/>
+                <constraint firstItem="bbe-XG-auv" firstAttribute="top" secondItem="fsA-31-TA4" secondAttribute="top" id="d5H-UG-ag0"/>
+                <constraint firstItem="fsA-31-TA4" firstAttribute="top" secondItem="AdX-jx-GF7" secondAttribute="bottom" id="dTW-y6-WMH"/>
+                <constraint firstItem="fsA-31-TA4" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="48" id="gMf-sv-O3N"/>
+                <constraint firstItem="bbe-XG-auv" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="gq0-yo-kRC"/>
+                <constraint firstItem="PWL-EF-cIh" firstAttribute="bottom" secondItem="fsA-31-TA4" secondAttribute="bottom" id="lQp-N6-eEW"/>
+                <constraint firstItem="PWL-EF-cIh" firstAttribute="leading" secondItem="fsA-31-TA4" secondAttribute="trailing" id="n9L-NO-pIY"/>
+                <constraint firstItem="bbe-XG-auv" firstAttribute="bottom" secondItem="fsA-31-TA4" secondAttribute="bottom" id="odS-MZ-X6C"/>
+                <constraint firstItem="AdX-jx-GF7" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="py6-aK-7St"/>
+                <constraint firstItem="PWL-EF-cIh" firstAttribute="top" secondItem="fsA-31-TA4" secondAttribute="top" id="qED-e7-Ofz"/>
+                <constraint firstItem="fsA-31-TA4" firstAttribute="leading" secondItem="bbe-XG-auv" secondAttribute="trailing" id="wcA-oe-a9G"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+        </view>
+    </objects>
+</document>
