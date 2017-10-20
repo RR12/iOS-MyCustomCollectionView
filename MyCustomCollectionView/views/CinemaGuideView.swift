@@ -23,7 +23,7 @@ class CinemaGuideView: UIScrollView {
         let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
         style.alignment = .center
         return [
-            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 11),
+            NSAttributedStringKey.font: UIFont.row,
             NSAttributedStringKey.foregroundColor: UIColor.darkGray,
             NSAttributedStringKey.paragraphStyle: style
         ]
@@ -48,7 +48,7 @@ class CinemaGuideView: UIScrollView {
         
         for (index, row) in rows.enumerated() {
             y = (CGFloat(index) * rowHeight)
-            let rect = CGRect(x: 0, y: y, width: rect.width, height: rowHeight + rowSpacing)
+            let rect = CGRect(x: 0, y: y + 0.5 * rowHeight - UIFont.row.lineHeight, width: rect.width, height: rowHeight + rowSpacing)
             (row as NSString).draw(in: rect,withAttributes: rowLabelAttributes)
         }
     }
