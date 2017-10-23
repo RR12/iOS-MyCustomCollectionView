@@ -10,9 +10,20 @@ import UIKit
 
 protocol CinemaSeatLayoutDelegate: class {
 
-    func didSelectSeat(row: Int, column: Int)
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didSelectSeat row: Int, column: Int)
 
-    func didUnselectSeat(row: Int, column: Int)
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didUnSelectSeat row: Int, column: Int)
+
+}
+
+protocol CinemaSeatLayoutDataSource: class {
+
+    func numberOfRow(in cinemaSeatLayout: CinemaSeatLayout) -> Int
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, numberOfColumnAt row: Int) -> Int
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, componentForColumn column: Int, at row: Int) ->
+            CinemaSeatComponent
 
 }
 
@@ -22,6 +33,9 @@ class CinemaSeatLayout: UIView {
     @IBOutlet weak var seatView: CinemaSeatView!
     @IBOutlet weak var leftGuideView: CinemaGuideView!
     @IBOutlet weak var rightGuideView: CinemaGuideView!
+
+    weak var delegate: CinemaSeatLayoutDelegate?
+    weak var dataSource: CinemaSeatLayoutDataSource?
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -126,13 +140,16 @@ extension CinemaSeatLayout: CinemaSeatViewDelegate {
         rightGuideView.updateRowHeight(size.height)
     }
 
-
     func didSelectSeat(row: Int, column: Int) {
-        delegate?.didSelectSeat(row: row, column: column)
+        delegate?.cinemaSeatLayout(self, didSelectSeat: row, column: column)
     }
 
-    func didUnselectSeat(row: Int, column: Int) {
-        delegate?.didUnselectSeat(row: row, column: column)
+    func didUnSelectSeat(row: Int, column: Int) {
+        delegate?.cinemaSeatLayout(self, didUnSelectSeat: row, column: column)
     }
+
+}
+
+protocol CinemaSeatComponent {
 
 }
