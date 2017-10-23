@@ -11,10 +11,12 @@ import UIKit
 class ViewController: UIViewController {
 
     @IBOutlet weak var cinemaSeatLayout: CinemaSeatLayout!
-    
+
+    private var viewModel = ViewModel()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         //Dummy seats
         var seats = [Seat]()
         for row in 0...20 {
@@ -25,6 +27,7 @@ class ViewController: UIViewController {
         }
         cinemaSeatLayout.setSeats(seats)
         cinemaSeatLayout.delegate = self
+        cinemaSeatLayout.dataSource = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -36,13 +39,38 @@ class ViewController: UIViewController {
 
 // MARK: - CinemaSeatLayoutDelegate
 extension ViewController: CinemaSeatLayoutDelegate {
-    
-    func didSelectSeat(row: Int, column: Int) {
-        
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didSelectSeat row: Int, column: Int) {
+
     }
-    
-    func didUnselectSeat(row: Int, column: Int) {
-        
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didUnSelectSeat row: Int, column: Int) {
+
     }
-    
+
+}
+
+extension ViewController: CinemaSeatLayoutDataSource {
+
+    func numberOfRow(in cinemaSeatLayout: CinemaSeatLayout) -> Int {
+        return 20
+    }
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, numberOfColumnAt row: Int) -> Int {
+        return 20
+    }
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, componentForColumn column: Int, at row: Int) ->
+            CinemaSeatComponent {
+        return viewModel.getComponent(for: row, column: column)
+    }
+
+}
+
+class ViewModel {
+
+    func getComponent(for row: Int, column: Int) -> CinemaSeatComponent {
+        fatalError()
+    }
+
 }

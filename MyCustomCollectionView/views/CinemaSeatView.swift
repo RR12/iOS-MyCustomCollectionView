@@ -21,6 +21,16 @@ protocol CinemaSeatViewDelegate: class {
 
 }
 
+protocol CinemaSeatViewDataSource: class {
+
+    func numberOfRow(in cinemaSeatView: CinemaSeatView) -> Int
+
+    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, numberOfColumnAt row: Int) -> Int
+
+    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, componentForColumn column: Int, at row: Int)
+
+}
+
 extension CinemaSeatViewDelegate {
 
     func didSelectSeat(row: Int, column: Int) {}
@@ -68,6 +78,7 @@ class CinemaSeatView: UIView {
 //    }()
 
     weak var delegate: CinemaSeatViewDelegate?
+    weak var dataSource: CinemaSeatViewDataSource?
 
     var seats = [Seat]() {
         didSet {
@@ -108,8 +119,11 @@ class CinemaSeatView: UIView {
     }
 
     private func calculateSeatWidth(rect: CGRect) {
-        let totalSpacing = seatSpacing * CGFloat(columnCount + 1)
-        seatWidth = (rect.width - totalSpacing) / CGFloat(columnCount)
+        guard let count = dataSource?.cinemaSeatView(self, numberOfColumnAt: 0) else {
+            return
+        }
+        let totalSpacing = seatSpacing * CGFloat(count + 1)
+        seatWidth = (rect.width - totalSpacing) / CGFloat(count)
     }
 
     private func calculateRowColumn() {
@@ -119,6 +133,12 @@ class CinemaSeatView: UIView {
         var currentRow = 0
         var currentColumn = 0
 
+        // loop row
+        //  loop count
+        //      component for row and column
+        //      if component == Seat >
+        //      else if component == Space >
+        //      else if component == Text
         seats.forEach { seat in
             if currentRow != seat.row {
                 currentRow = seat.row
