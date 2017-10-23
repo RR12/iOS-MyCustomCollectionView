@@ -47,7 +47,9 @@ class CinemaGuideView: UIScrollView {
         var y: CGFloat = 0
         
         for (index, row) in rows.enumerated() {
-            y = (CGFloat(index) * rowHeight + (((rowSpacing - 4) / 12) * (0.5 * rowHeight - UIFont.row.lineHeight + 4)))
+            let scale = (rowSpacing - 4) / 12 // scale: 0 - 1
+            let midLabel = 0.5 * rowHeight - scale * (UIFont.row.lineHeight) + 4
+            y = (CGFloat(index) * rowHeight + scale * midLabel)
             let rect = CGRect(x: 0, y: y, width: rect.width, height: rowHeight + rowSpacing)
             (row as NSString).draw(in: rect,withAttributes: rowLabelAttributes)
         }
