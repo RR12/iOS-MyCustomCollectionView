@@ -8,6 +8,14 @@
 
 import UIKit
 
+protocol CinemaSeatLayoutDelegate: class {
+
+    func didSelectSeat(row: Int, column: Int)
+
+    func didUnselectSeat(row: Int, column: Int)
+
+}
+
 class CinemaSeatLayout: UIView {
 
     @IBOutlet weak var seatScrollView: UIScrollView!
@@ -116,6 +124,15 @@ extension CinemaSeatLayout: CinemaSeatViewDelegate {
     func onSeatSizeChanged(_ size: CGSize) {
         leftGuideView.updateRowHeight(size.height)
         rightGuideView.updateRowHeight(size.height)
+    }
+
+
+    func didSelectSeat(row: Int, column: Int) {
+        delegate?.didSelectSeat(row: row, column: column)
+    }
+
+    func didUnselectSeat(row: Int, column: Int) {
+        delegate?.didUnselectSeat(row: row, column: column)
     }
 
 }

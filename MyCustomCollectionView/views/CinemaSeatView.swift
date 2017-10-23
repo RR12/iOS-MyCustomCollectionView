@@ -35,7 +35,7 @@ class CinemaSeatView: UIView {
 
     private var seatWidth: CGFloat = 0 {
         didSet {
-            let w = seatWidth + seatSpacing
+            let w = (seatWidth * currentScale) + (seatSpacing * currentScale)
             delegate?.onSeatSizeChanged(CGSize(width: w, height: w))
         }
     }

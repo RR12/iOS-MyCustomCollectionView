@@ -24,6 +24,7 @@ class ViewController: UIViewController {
             }
         }
         cinemaSeatLayout.setSeats(seats)
+        cinemaSeatLayout.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
@@ -33,3 +34,15 @@ class ViewController: UIViewController {
 
 }
 
+// MARK: - CinemaSeatLayoutDelegate
+extension ViewController: CinemaSeatLayoutDelegate {
+    
+    func didSelectSeat(row: Int, column: Int) {
+        
+    }
+    
+    func didUnselectSeat(row: Int, column: Int) {
+        
+    }
+    
+}
