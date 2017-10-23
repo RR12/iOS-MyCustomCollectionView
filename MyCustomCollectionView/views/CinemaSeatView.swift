@@ -23,10 +23,6 @@ protocol CinemaSeatViewDelegate: class {
 
 extension CinemaSeatViewDelegate {
     
-    func didSelectSeat(row: Int, column: Int) {}
-    
-    func didUnselectSeat(row: Int, column: Int) {}
-    
     func onSeatScrolled(x: CGFloat, y: CGFloat) {}
     
 }
