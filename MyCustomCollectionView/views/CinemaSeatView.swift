@@ -46,16 +46,26 @@ class CinemaSeatView: UIView {
     private var columnCount = 0
 
     private let seatRadii = CGSize(width: 3.0, height: 3.0)
-
-    private lazy var seatLabelAttributes: [NSAttributedStringKey: Any] = {
+    
+    private lazy var seatLabelAttributes: [String: Any] = {
         let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
         style.alignment = .center
         return [
-            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 7),
-            NSAttributedStringKey.foregroundColor: UIColor.darkGray,
-            NSAttributedStringKey.paragraphStyle: style
+            NSFontAttributeName: UIFont.seat,
+            NSForegroundColorAttributeName: UIColor.darkGray,
+            NSParagraphStyleAttributeName: style
         ]
     }()
+
+//    private lazy var seatLabelAttributes: [NSAttributedStringKey: Any] = {
+//        let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
+//        style.alignment = .center
+//        return [
+//            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 7),
+//            NSAttributedStringKey.foregroundColor: UIColor.darkGray,
+//            NSAttributedStringKey.paragraphStyle: style
+//        ]
+//    }()
 
     weak var delegate: CinemaSeatViewDelegate?
 
@@ -211,7 +221,15 @@ class CinemaSeatView: UIView {
 
 }
 
-struct Seat {
+protocol Component { // EmptySpace & 
+    
+    var row: Int { get set }
+    
+    var column: Int { get set }
+    
+}
+
+struct Seat: Component {
 
     enum State {
         case available

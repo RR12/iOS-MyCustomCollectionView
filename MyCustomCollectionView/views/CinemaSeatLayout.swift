@@ -17,6 +17,8 @@ protocol CinemaSeatLayoutDelegate: class {
 }
 
 class CinemaSeatLayout: UIView {
+    
+    weak var delegate: CinemaSeatLayoutDelegate?
 
     @IBOutlet weak var seatScrollView: UIScrollView!
     @IBOutlet weak var seatView: CinemaSeatView!
@@ -69,7 +71,7 @@ class CinemaSeatLayout: UIView {
         rightGuideView.setNeedsDisplay()
     }
 
-    private func updateGuideContentOffsetAndSize() {
+    fileprivate func updateGuideContentOffsetAndSize() {
         let guideContentSize = CGSize(width: leftGuideView.frame.width, height: seatScrollView.contentSize.height)
         leftGuideView.contentSize = guideContentSize
         rightGuideView.contentSize = guideContentSize
