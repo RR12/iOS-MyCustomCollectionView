@@ -9,26 +9,26 @@
 import UIKit
 
 class CinemaSeatLayout: UIView {
-    
+
     @IBOutlet weak var seatScrollView: UIScrollView!
     @IBOutlet weak var seatView: CinemaSeatView!
     @IBOutlet weak var leftGuideView: CinemaGuideView!
     @IBOutlet weak var rightGuideView: CinemaGuideView!
-    
+
     override func layoutSubviews() {
         super.layoutSubviews()
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         initialize()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initialize()
     }
-    
+
     private func initialize() {
         if subviews.count == 0,
             let view = Bundle.main.loadNibNamed("CinemaSeatLayout", owner: self, options: nil)?.first as? UIView {
@@ -38,38 +38,38 @@ class CinemaSeatLayout: UIView {
         seatView.currentScale = 1.0
         seatView.isUserInteractionEnabled = true
         seatView.delegate = self
-        
+
         seatScrollView.minimumZoomScale = 1.0
         seatScrollView.maximumZoomScale = 4.0
         seatScrollView.delegate = self
         seatScrollView.canCancelContentTouches = true
         seatScrollView.delaysContentTouches = true
-        
+
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(onSeatAreaTapped(gesture:)))
         tapGesture.numberOfTapsRequired = 1
         seatView.addGestureRecognizer(tapGesture)
     }
-    
+
     @objc func onSeatAreaTapped(gesture: UITapGestureRecognizer) {
         let tappedPoint = gesture.location(in: seatView)
         print("Tapped point = \(tappedPoint)")
         seatView.onSeatAreaTapped(on: tappedPoint)
     }
-    
+
     private func invalidateGuideViews() {
         leftGuideView.setNeedsDisplay()
         rightGuideView.setNeedsDisplay()
     }
-    
+
     private func updateGuideContentOffsetAndSize() {
         let guideContentSize = CGSize(width: leftGuideView.frame.width, height: seatScrollView.contentSize.height)
         leftGuideView.contentSize = guideContentSize
         rightGuideView.contentSize = guideContentSize
-        
+
         let guideContentOffset = CGPoint(x: 0, y: seatScrollView.contentOffset.y)
         leftGuideView.contentOffset = guideContentOffset
         rightGuideView.contentOffset = guideContentOffset
-        
+
         invalidateGuideViews()
     }
 
@@ -89,33 +89,33 @@ class CinemaSeatLayout: UIView {
         rightGuideView.rows = rows
         seatView.seats = seats
     }
-    
+
 }
 
 extension CinemaSeatLayout: UIScrollViewDelegate {
-    
+
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return seatView
     }
-    
+
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         print("\nScale = \(scrollView.zoomScale)\nScrollView Content Size = \(scrollView.contentSize)")
         seatView.currentScale = scrollView.zoomScale
         updateGuideContentOffsetAndSize()
     }
-    
+
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         print("\nScale = \(scrollView.zoomScale)\nScrollView Content Offset = \(scrollView.contentOffset)")
         updateGuideContentOffsetAndSize()
     }
-    
+
 }
 
 extension CinemaSeatLayout: CinemaSeatViewDelegate {
-    
+
     func onSeatSizeChanged(_ size: CGSize) {
         leftGuideView.updateRowHeight(size.height)
         rightGuideView.updateRowHeight(size.height)
     }
-    
+
 }

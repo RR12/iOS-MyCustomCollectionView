@@ -10,29 +10,29 @@ import UIKit
 import QuartzCore
 
 protocol CinemaSeatViewDelegate: class {
-    
+
     func onSeatSizeChanged(_ size: CGSize)
-    
+
     func didSelectSeat(row: Int, column: Int)
-    
-    func didUnselectSeat(row: Int, column: Int)
-    
-    func onSeatScrolled(x: CGFloat, y: CGFloat)
-    
+
+    func didUnSelectSeat(row: Int, column: Int)
+
+    func onSeatScrolled(row: CGFloat, column: CGFloat)
+
 }
 
 extension CinemaSeatViewDelegate {
-    
+
     func didSelectSeat(row: Int, column: Int) {}
-    
-    func didUnselectSeat(row: Int, column: Int) {}
-    
-    func onSeatScrolled(x: CGFloat, y: CGFloat) {}
-    
+
+    func didUnSelectSeat(row: Int, column: Int) {}
+
+    func onSeatScrolled(row: CGFloat, column: CGFloat) {}
+
 }
 
 class CinemaSeatView: UIView {
-    
+
     private var seatWidth: CGFloat = 0 {
         didSet {
             let w = seatWidth + seatSpacing
@@ -41,12 +41,12 @@ class CinemaSeatView: UIView {
     }
     private var seatSpacing: CGFloat = 4
     private var originalRect: CGRect = .zero
-    private var currectRect: CGRect = .zero
+    private var currentRect: CGRect = .zero
     private var rowCount = 0
     private var columnCount = 0
-    
+
     private let seatRadii = CGSize(width: 3.0, height: 3.0)
-    
+
     private lazy var seatLabelAttributes: [NSAttributedStringKey: Any] = {
         let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
         style.alignment = .center
@@ -56,16 +56,16 @@ class CinemaSeatView: UIView {
             NSAttributedStringKey.paragraphStyle: style
         ]
     }()
-    
+
     weak var delegate: CinemaSeatViewDelegate?
-    
+
     var seats = [Seat]() {
         didSet {
             calculateRowColumn()
             setNeedsDisplay()
         }
     }
-    
+
     var currentScale: CGFloat = 0 {
         didSet {
             let scaledSeatWidth = (seatWidth * currentScale) + (seatSpacing * currentScale)
@@ -73,17 +73,17 @@ class CinemaSeatView: UIView {
             delegate?.onSeatSizeChanged(seatSize)
         }
     }
-    
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         initialize()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         initialize()
     }
-    
+
     override func draw(_ rect: CGRect) {
         print(rect)
         guard let context = UIGraphicsGetCurrentContext() else {
@@ -92,23 +92,23 @@ class CinemaSeatView: UIView {
         calculateSeatWidth(rect: rect)
         drawSeat(context: context)
     }
-    
+
     private func initialize() {
         backgroundColor = UIColor.white
     }
-    
+
     private func calculateSeatWidth(rect: CGRect) {
         let totalSpacing = seatSpacing * CGFloat(columnCount + 1)
         seatWidth = (rect.width - totalSpacing) / CGFloat(columnCount)
     }
-    
+
     private func calculateRowColumn() {
         var maxRowCount = 0
         var maxColumnCount = 0
         var currentRowColumnCount = 0
         var currentRow = 0
         var currentColumn = 0
-        
+
         seats.forEach { seat in
             if currentRow != seat.row {
                 currentRow = seat.row
@@ -126,12 +126,12 @@ class CinemaSeatView: UIView {
         rowCount = maxRowCount
         columnCount = maxColumnCount
     }
-    
+
     private func drawSeat(context: CGContext) {
         var top: CGFloat = 1.0
         var currentRow = 0
         var leading: CGFloat = 0
-        
+
         seats.forEach { seat in
             if seat.row != currentRow {
                 currentRow = seat.row
@@ -143,10 +143,10 @@ class CinemaSeatView: UIView {
             } else {
                 leading += (seatWidth + seatSpacing)
             }
-            
+
             let rect = CGRect(x: leading, y: top, width: seatWidth, height: seatWidth)
-            
-            switch (seat.state) {
+
+            switch seat.state {
             case .available:
                 drawAvailableSeat(context: context, rect: rect, seatLabel: String(seat.column))
             case .unavailable:
@@ -156,7 +156,7 @@ class CinemaSeatView: UIView {
             }
         }
     }
-    
+
     private func drawAvailableSeat(context: CGContext, rect: CGRect, seatLabel: String) {
         UIColor.gray.set()
         let path = UIBezierPath(roundedRect: rect,
@@ -164,10 +164,10 @@ class CinemaSeatView: UIView {
                                 cornerRadii: seatRadii)
         context.addPath(path.cgPath)
         context.strokePath()
-    
-        (seatLabel as NSString).draw(in: rect,withAttributes: seatLabelAttributes)
+
+        (seatLabel as NSString).draw(in: rect, withAttributes: seatLabelAttributes)
     }
-    
+
     private func drawUnavailableSeat(context: CGContext, rect: CGRect) {
         UIColor.darkGrey.set()
         let path = UIBezierPath(roundedRect: rect,
@@ -176,7 +176,7 @@ class CinemaSeatView: UIView {
         context.addPath(path.cgPath)
         context.fillPath()
     }
-    
+
     private func drawSelectedSeat(context: CGContext, rect: CGRect) {
         UIColor.orange.set()
         let path = UIBezierPath(roundedRect: rect,
@@ -185,22 +185,22 @@ class CinemaSeatView: UIView {
         context.addPath(path.cgPath)
         context.fillPath()
     }
-    
+
     func onSeatAreaTapped(on point: CGPoint) {
         let column = Int(floor(point.x / (seatWidth + seatSpacing)))
         let row = Int(floor(point.y / (seatWidth + seatSpacing)))
         print("Row = \(row) - Column = \(column)")
-        
+
         seats = seats.map { seat -> Seat in
             if seat.row == row && seat.column == column {
                 var newSeat = seat
-                switch (seat.state) {
+                switch seat.state {
                 case .available:
                     newSeat.state = .selected
                     delegate?.didSelectSeat(row: row, column: column)
                 case .selected:
                     newSeat.state = .available
-                    delegate?.didUnselectSeat(row: row, column: column)
+                    delegate?.didUnSelectSeat(row: row, column: column)
                 default: newSeat.state = .unavailable
                 }
                 return newSeat
@@ -208,19 +208,19 @@ class CinemaSeatView: UIView {
             return seat
         }
     }
-    
+
 }
 
 struct Seat {
-    
+
     enum State {
         case available
         case unavailable
         case selected
     }
-    
+
     var row: Int
     var column: Int
     var state: State
-    
+
 }
