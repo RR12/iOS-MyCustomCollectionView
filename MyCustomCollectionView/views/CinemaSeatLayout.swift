@@ -10,7 +10,7 @@ import UIKit
 
 protocol CinemaSeatLayoutDelegate: class {
 
-    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didSelectSeat row: Int, column: Int)
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didSelect seat: Seat)
 
     func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didUnSelectSeat row: Int, column: Int)
 
@@ -24,20 +24,33 @@ protocol CinemaSeatLayoutDataSource: class {
 
     func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, componentForColumn column: Int, at row: Int) ->
             CinemaSeatComponent
+    
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, guideTextForRow: Int) -> String
 
 }
 
 class CinemaSeatLayout: UIView {
-    
-    weak var delegate: CinemaSeatLayoutDelegate?
 
     @IBOutlet weak var seatScrollView: UIScrollView!
     @IBOutlet weak var seatView: CinemaSeatView!
     @IBOutlet weak var leftGuideView: CinemaGuideView!
     @IBOutlet weak var rightGuideView: CinemaGuideView!
 
-    weak var delegate: CinemaSeatLayoutDelegate?
-    weak var dataSource: CinemaSeatLayoutDataSource?
+    weak var delegate: CinemaSeatLayoutDelegate? {
+        didSet {
+            seatView.delegate = self
+        }
+    }
+    weak var dataSource: CinemaSeatLayoutDataSource? {
+        didSet {
+            setRows()
+            leftGuideView.rows = rows
+            rightGuideView.rows = rows
+            seatView.dataSource = self
+        }
+    }
+    
+    var rows = [String]()
 
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -61,7 +74,6 @@ class CinemaSeatLayout: UIView {
         }
         seatView.currentScale = 1.0
         seatView.isUserInteractionEnabled = true
-        seatView.delegate = self
 
         seatScrollView.minimumZoomScale = 1.0
         seatScrollView.maximumZoomScale = 4.0
@@ -96,26 +108,21 @@ class CinemaSeatLayout: UIView {
 
         invalidateGuideViews()
     }
-
-    func setSeats(_ seats: [Seat]) {
+    
+    private func setRows() {
+        guard let dataSource = dataSource else { return }
         var row = 64
-        var currentRow = -1
         var rows = [String]()
-        seats.forEach { seat in
-            if currentRow != seat.row {
-                currentRow = seat.row
-                row += 1
-                let char = Character(UnicodeScalar(row)!)
-                rows.append(String(char))
-            }
+        for i in 0..<dataSource.numberOfRow(in: self) {
+            row += 1
+            rows.append(dataSource.cinemaSeatLayout(self, guideTextForRow: i))
         }
-        leftGuideView.rows = rows
-        rightGuideView.rows = rows
-        seatView.seats = seats
+        self.rows = rows
     }
 
 }
 
+// MARK: - UIScrollViewDelegate
 extension CinemaSeatLayout: UIScrollViewDelegate {
 
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
@@ -135,6 +142,7 @@ extension CinemaSeatLayout: UIScrollViewDelegate {
 
 }
 
+// MARK: - CinemaSeatViewDelegate
 extension CinemaSeatLayout: CinemaSeatViewDelegate {
 
     func onSeatSizeChanged(_ size: CGSize) {
@@ -142,8 +150,8 @@ extension CinemaSeatLayout: CinemaSeatViewDelegate {
         rightGuideView.updateRowHeight(size.height)
     }
 
-    func didSelectSeat(row: Int, column: Int) {
-        delegate?.cinemaSeatLayout(self, didSelectSeat: row, column: column)
+    func didSelectSeat(_ seat: Seat) {
+        delegate?.cinemaSeatLayout(self, didSelect: seat)
     }
 
     func didUnSelectSeat(row: Int, column: Int) {
@@ -152,6 +160,20 @@ extension CinemaSeatLayout: CinemaSeatViewDelegate {
 
 }
 
-protocol CinemaSeatComponent {
-
+// MARK: - CinemaSeatViewDataSource
+extension CinemaSeatLayout: CinemaSeatViewDataSource {
+ 
+    func numberOfRow(in cinemaSeatView: CinemaSeatView) -> Int {
+        return rows.count
+    }
+    
+    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, numberOfColumnAt row: Int) -> Int {
+        return dataSource?.cinemaSeatLayout(self, numberOfColumnAt: row) ?? 0
+    }
+    
+    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, componentForColumn column: Int, at row: Int) -> CinemaSeatComponent {
+        guard let dataSource = dataSource else { fatalError() }
+        return dataSource.cinemaSeatLayout(self, componentForColumn: column, at: row)
+    }
+    
 }

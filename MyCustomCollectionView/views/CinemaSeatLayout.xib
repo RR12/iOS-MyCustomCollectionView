@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="13196" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="12121" systemVersion="16G29" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13173"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
-        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -56,24 +56,23 @@
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
-                <constraint firstItem="fsA-31-TA4" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="30" id="3G6-Is-D5e"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="fsA-31-TA4" secondAttribute="trailing" constant="40" id="4v0-eV-HaF"/>
-                <constraint firstItem="PWL-EF-cIh" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="6bz-o7-H7j"/>
-                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="AdX-jx-GF7" secondAttribute="trailing" id="JBi-lq-srv"/>
+                <constraint firstAttribute="bottom" secondItem="AdX-jx-GF7" secondAttribute="bottom" constant="599" id="1l0-Yy-c9p"/>
+                <constraint firstAttribute="trailing" secondItem="fsA-31-TA4" secondAttribute="trailing" constant="40" id="4v0-eV-HaF"/>
+                <constraint firstAttribute="trailing" secondItem="AdX-jx-GF7" secondAttribute="trailing" id="JBi-lq-srv"/>
+                <constraint firstItem="AdX-jx-GF7" firstAttribute="trailing" secondItem="PWL-EF-cIh" secondAttribute="trailing" id="XYH-KW-BR7"/>
                 <constraint firstItem="AdX-jx-GF7" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="aKW-4V-AkW"/>
                 <constraint firstItem="bbe-XG-auv" firstAttribute="top" secondItem="fsA-31-TA4" secondAttribute="top" id="d5H-UG-ag0"/>
                 <constraint firstItem="fsA-31-TA4" firstAttribute="top" secondItem="AdX-jx-GF7" secondAttribute="bottom" id="dTW-y6-WMH"/>
-                <constraint firstItem="fsA-31-TA4" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" constant="48" id="gMf-sv-O3N"/>
-                <constraint firstItem="bbe-XG-auv" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="gq0-yo-kRC"/>
                 <constraint firstItem="PWL-EF-cIh" firstAttribute="bottom" secondItem="fsA-31-TA4" secondAttribute="bottom" id="lQp-N6-eEW"/>
                 <constraint firstItem="PWL-EF-cIh" firstAttribute="leading" secondItem="fsA-31-TA4" secondAttribute="trailing" id="n9L-NO-pIY"/>
+                <constraint firstItem="AdX-jx-GF7" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="oF2-Or-tYM"/>
                 <constraint firstItem="bbe-XG-auv" firstAttribute="bottom" secondItem="fsA-31-TA4" secondAttribute="bottom" id="odS-MZ-X6C"/>
-                <constraint firstItem="AdX-jx-GF7" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="py6-aK-7St"/>
+                <constraint firstItem="AdX-jx-GF7" firstAttribute="leading" secondItem="bbe-XG-auv" secondAttribute="leading" id="p8c-JH-wzu"/>
                 <constraint firstItem="PWL-EF-cIh" firstAttribute="top" secondItem="fsA-31-TA4" secondAttribute="top" id="qED-e7-Ofz"/>
                 <constraint firstItem="fsA-31-TA4" firstAttribute="leading" secondItem="bbe-XG-auv" secondAttribute="trailing" id="wcA-oe-a9G"/>
+                <constraint firstAttribute="bottom" secondItem="bbe-XG-auv" secondAttribute="bottom" constant="294" id="xtx-cP-HoJ"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
         </view>
     </objects>
 </document>

@@ -13,7 +13,7 @@ protocol CinemaSeatViewDelegate: class {
 
     func onSeatSizeChanged(_ size: CGSize)
 
-    func didSelectSeat(row: Int, column: Int)
+    func didSelectSeat(_ seat: Seat)
 
     func didUnSelectSeat(row: Int, column: Int)
 
@@ -27,13 +27,13 @@ protocol CinemaSeatViewDataSource: class {
 
     func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, numberOfColumnAt row: Int) -> Int
 
-    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, componentForColumn column: Int, at row: Int)
+    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, componentForColumn column: Int, at row: Int) -> CinemaSeatComponent
 
 }
 
 extension CinemaSeatViewDelegate {
 
-    func didSelectSeat(row: Int, column: Int) {}
+    func didSelectSeat(_ seat: Seat) {}
 
     func didUnSelectSeat(row: Int, column: Int) {}
 
@@ -49,40 +49,31 @@ class CinemaSeatView: UIView {
             delegate?.onSeatSizeChanged(CGSize(width: w, height: w))
         }
     }
-    private var seatSpacing: CGFloat = 4
+    private var seatSpacing: CGFloat { return 4 }
     private var originalRect: CGRect = .zero
     private var currentRect: CGRect = .zero
-    private var rowCount = 0
-    private var columnCount = 0
 
     private let seatRadii = CGSize(width: 3.0, height: 3.0)
-    
-    private lazy var seatLabelAttributes: [String: Any] = {
+
+    private lazy var seatLabelAttributes: [NSAttributedStringKey: Any] = {
         let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
         style.alignment = .center
         return [
-            NSFontAttributeName: UIFont.seat,
-            NSForegroundColorAttributeName: UIColor.darkGray,
-            NSParagraphStyleAttributeName: style
+            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 7),
+            NSAttributedStringKey.foregroundColor: UIColor.darkGray,
+            NSAttributedStringKey.paragraphStyle: style
         ]
     }()
 
-//    private lazy var seatLabelAttributes: [NSAttributedStringKey: Any] = {
-//        let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
-//        style.alignment = .center
-//        return [
-//            NSAttributedStringKey.font: UIFont.systemFont(ofSize: 7),
-//            NSAttributedStringKey.foregroundColor: UIColor.darkGray,
-//            NSAttributedStringKey.paragraphStyle: style
-//        ]
-//    }()
-
     weak var delegate: CinemaSeatViewDelegate?
-    weak var dataSource: CinemaSeatViewDataSource?
-
-    var seats = [Seat]() {
+    weak var dataSource: CinemaSeatViewDataSource? {
         didSet {
-            calculateRowColumn()
+            setSeats()
+        }
+    }
+    
+    private var cinemaComponents = [[CinemaSeatComponent]]() {
+        didSet {
             setNeedsDisplay()
         }
     }
@@ -111,7 +102,7 @@ class CinemaSeatView: UIView {
             return
         }
         calculateSeatWidth(rect: rect)
-        drawSeat(context: context)
+        drawComponents(context: context)
     }
 
     private func initialize() {
@@ -126,67 +117,53 @@ class CinemaSeatView: UIView {
         seatWidth = (rect.width - totalSpacing) / CGFloat(count)
     }
 
-    private func calculateRowColumn() {
-        var maxRowCount = 0
-        var maxColumnCount = 0
-        var currentRowColumnCount = 0
-        var currentRow = 0
-        var currentColumn = 0
-
-        // loop row
-        //  loop count
-        //      component for row and column
-        //      if component == Seat >
-        //      else if component == Space >
-        //      else if component == Text
-        seats.forEach { seat in
-            if currentRow != seat.row {
-                currentRow = seat.row
-                maxRowCount += 1
-                currentRowColumnCount = 0
-            }
-            if currentColumn != seat.column {
-                currentColumn = seat.column
-                currentRowColumnCount += 1
-            }
-            if currentRowColumnCount > maxColumnCount {
-                maxColumnCount = currentRowColumnCount
-            }
-        }
-        rowCount = maxRowCount
-        columnCount = maxColumnCount
-    }
-
-    private func drawSeat(context: CGContext) {
+    private func drawComponents(context: CGContext) {
         var top: CGFloat = 1.0
-        var currentRow = 0
         var leading: CGFloat = 0
-
-        seats.forEach { seat in
-            if seat.row != currentRow {
-                currentRow = seat.row
-                leading = 0
-                top += (seatWidth + seatSpacing)
-            }
-            if seat.column == 0 {
-                leading = seatSpacing
-            } else {
-                leading += (seatWidth + seatSpacing)
-            }
-
-            let rect = CGRect(x: leading, y: top, width: seatWidth, height: seatWidth)
-
-            switch seat.state {
-            case .available:
-                drawAvailableSeat(context: context, rect: rect, seatLabel: String(seat.column))
-            case .unavailable:
-                drawUnavailableSeat(context: context, rect: rect)
-            case .selected:
-                drawSelectedSeat(context: context, rect: rect)
+        
+        cinemaComponents.enumerated().forEach { (row, arrComponents) in
+            loop : for (column, component) in arrComponents.enumerated() {
+                if column == 0 {
+                    leading = seatSpacing
+                    if row > 0 {
+                        top += (seatWidth + seatSpacing)
+                    }
+                } else {
+                    leading += (seatWidth + seatSpacing)
+                }
+                
+                switch component {
+                case let seat as Seat:
+                    let rect = CGRect(x: leading, y: top, width: seatWidth, height: seatWidth)
+                    drawSeat(context: context, seat, rect: rect)
+                case _ as Space:
+                    break
+                case let seatText as SeatText:
+                    if column == 0 {
+                        let newTop = top + 0.5 * seatWidth - 0.5 * UIFont.titleSeat.lineHeight
+                        let rect = CGRect(x: leading, y: newTop, width: superview!.frame.width, height: seatWidth)
+                        drawSeatText(context: context, rect: rect, seatText: seatText)
+                        break loop
+                    } else {
+                        fatalError("SeatText only could be used in column 0")
+                    }
+                default: fatalError("func drawSeat in CinemaSeatView; unknown seat component")
+                }
             }
         }
     }
 
+    private func drawSeat(context: CGContext, _ seat: Seat, rect: CGRect) {
+        switch seat.state {
+        case .available:
+            drawAvailableSeat(context: context, rect: rect, seatLabel: seat.text)
+        case .unavailable:
+            drawUnavailableSeat(context: context, rect: rect)
+        case .selected:
+            drawSelectedSeat(context: context, rect: rect)
+        }
+    }
+    
     private func drawAvailableSeat(context: CGContext, rect: CGRect, seatLabel: String) {
         UIColor.gray.set()
         let path = UIBezierPath(roundedRect: rect,
@@ -215,33 +192,71 @@ class CinemaSeatView: UIView {
         context.addPath(path.cgPath)
         context.fillPath()
     }
-
+    
+    private func drawSeatText(context: CGContext, rect: CGRect, seatText: SeatText) {
+        let style: NSMutableParagraphStyle = NSMutableParagraphStyle()
+        style.alignment = .center
+        return [
+            NSAttributedStringKey.font: UIFont.titleSeat,
+            NSAttributedStringKey.foregroundColor: UIColor.darkGray,
+            NSAttributedStringKey.paragraphStyle: style
+        ]
+        (seatText.text.uppercased() as NSString).draw(in: rect, withAttributes: attributes)
+    }
+    
+    private func setSeats() {
+        var components = [[CinemaSeatComponent]]()
+        guard let dataSource = dataSource else {
+            return
+        }
+        for row in 0..<dataSource.numberOfRow(in: self) {
+            loop: for column in 0..<dataSource.cinemaSeatView(self, numberOfColumnAt: row) {
+                if column == 0 {
+                    components.insert([], at: row)
+                }
+                
+                let component = dataSource.cinemaSeatView(self, componentForColumn: column, at: row)
+                components[row].insert(component, at: column)
+                switch component {
+                case _ as SeatText: break loop
+                case let space as Space:
+                    if space.isFullSize {
+                        break loop
+                    } else {
+                        break
+                    }
+                default: break
+                }
+            }
+        }
+        self.cinemaComponents = components
+    }
+    
     func onSeatAreaTapped(on point: CGPoint) {
         let column = Int(floor(point.x / (seatWidth + seatSpacing)))
         let row = Int(floor(point.y / (seatWidth + seatSpacing)))
         print("Row = \(row) - Column = \(column)")
-
-        seats = seats.map { seat -> Seat in
-            if seat.row == row && seat.column == column {
-                var newSeat = seat
-                switch seat.state {
-                case .available:
-                    newSeat.state = .selected
-                    delegate?.didSelectSeat(row: row, column: column)
-                case .selected:
-                    newSeat.state = .available
-                    delegate?.didUnSelectSeat(row: row, column: column)
-                default: newSeat.state = .unavailable
-                }
-                return newSeat
+        
+        guard cinemaComponents.count > row && cinemaComponents[row].count > column else {
+            return
+        }
+        if var seat = cinemaComponents[row][column] as? Seat {
+            switch seat.state {
+            case .available:
+                delegate?.didSelectSeat(seat)
+            case .selected:
+                delegate?.didUnSelectSeat(row: row, column: column)
+            default: break
             }
-            return seat
+            
+            seat.changeState()
+            cinemaComponents[row][column] = seat
         }
     }
 
 }
 
-protocol Component { // EmptySpace & 
+protocol CinemaSeatComponent {  // Space & Text
     
     var row: Int { get set }
     
@@ -249,16 +264,60 @@ protocol Component { // EmptySpace &
     
 }
 
-struct Seat: Component {
-
+struct Seat: CinemaSeatComponent {
+    
     enum State {
         case available
         case unavailable
         case selected
     }
-
+    
     var row: Int
     var column: Int
     var state: State
+    var text: String
+    var data: Any
+    
+    mutating func changeState() {
+        switch state {
+        case .available:
+            state = .selected
+        case .selected:
+            state = .available
+        default: break
+        }
+    }
+}
 
+struct Space: CinemaSeatComponent {
+    
+    var row: Int
+    var column: Int
+    let isFullSize: Bool
+    
+    init(row: Int, column: Int) {
+        self.row = row
+        self.column = column
+        self.isFullSize = false
+    }
+    
+    init(row: Int) {
+        self.row = row
+        self.column = 0
+        self.isFullSize = true
+    }
+    
+}
+
+struct SeatText: CinemaSeatComponent {
+    
+    var row: Int
+    var column: Int = 0
+    var text: String
+    
+    init(row: Int, text: String) {
+        self.row = row
+        self.text = text
+    }
+    
 }
