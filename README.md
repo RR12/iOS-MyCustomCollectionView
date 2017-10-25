@@ -66,3 +66,6 @@ extension ViewController: CinemaSeatLayoutDataSource {
 
 }
 ```
+
+### Contributor
+- @IvanMTM
