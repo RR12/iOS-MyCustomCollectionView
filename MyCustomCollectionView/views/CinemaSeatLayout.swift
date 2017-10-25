@@ -24,8 +24,8 @@ protocol CinemaSeatLayoutDataSource: class {
 
     func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, componentForColumn column: Int, at row: Int) ->
             CinemaSeatComponent
-    
-    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, guideTextForRow: Int) -> String
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, guideTextFor row: Int) -> String
 
 }
 
@@ -49,7 +49,7 @@ class CinemaSeatLayout: UIView {
             seatView.dataSource = self
         }
     }
-    
+
     var rows = [String]()
 
     override func layoutSubviews() {
@@ -108,14 +108,14 @@ class CinemaSeatLayout: UIView {
 
         invalidateGuideViews()
     }
-    
+
     private func setRows() {
         guard let dataSource = dataSource else { return }
         var row = 64
         var rows = [String]()
         for i in 0..<dataSource.numberOfRow(in: self) {
             row += 1
-            rows.append(dataSource.cinemaSeatLayout(self, guideTextForRow: i))
+            rows.append(dataSource.cinemaSeatLayout(self, guideTextFor: i))
         }
         self.rows = rows
     }
@@ -162,18 +162,19 @@ extension CinemaSeatLayout: CinemaSeatViewDelegate {
 
 // MARK: - CinemaSeatViewDataSource
 extension CinemaSeatLayout: CinemaSeatViewDataSource {
- 
+
     func numberOfRow(in cinemaSeatView: CinemaSeatView) -> Int {
         return rows.count
     }
-    
+
     func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, numberOfColumnAt row: Int) -> Int {
         return dataSource?.cinemaSeatLayout(self, numberOfColumnAt: row) ?? 0
     }
-    
-    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, componentForColumn column: Int, at row: Int) -> CinemaSeatComponent {
+
+    func cinemaSeatView(_ cinemaSeatView: CinemaSeatView, componentForColumn column: Int, at row: Int) ->
+            CinemaSeatComponent {
         guard let dataSource = dataSource else { fatalError() }
         return dataSource.cinemaSeatLayout(self, componentForColumn: column, at: row)
     }
-    
+
 }

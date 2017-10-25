@@ -35,7 +35,6 @@ extension ViewController: CinemaSeatLayoutDelegate {
     }
 
     func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, didUnSelectSeat row: Int, column: Int) {
-        
     }
 
 }
@@ -55,19 +54,18 @@ extension ViewController: CinemaSeatLayoutDataSource {
             CinemaSeatComponent {
         return viewModel.getComponent(for: row, column: column)
     }
-    
-    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, guideTextForRow: Int) -> String {
+
+    func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, guideTextFor row: Int) -> String {
         return viewModel.getGuideTextFor(guideTextForRow)
     }
 
 }
 
 class ViewModel {
-    
+
     private var guideRow = 64
 
     func getComponent(for row: Int, column: Int) -> CinemaSeatComponent {
-        
         switch row {
         case 3, 6, 11:
             return Space(row: row)
@@ -87,22 +85,25 @@ class ViewModel {
                     return Space(row: row, column: column)
                 default:
                     let char = Character(UnicodeScalar(65 + row)!)
-                    return Seat(row: row, column: column, state: (row + column) % 5 == 0 ? .unavailable : .available, text: "1", data: "\(String(char)) - \(column)")
+                    return Seat(row: row, column: column, state: (row + column) % 5 == 0 ? .unavailable : .available,
+                            text: "1", data: "\(String(char)) - \(column)")
                 }
             case 13:
                 if column % 3 == 2 {
                     return Space(row: row, column: column)
                 } else {
                     let char = Character(UnicodeScalar(65 + row)!)
-                    return Seat(row: row, column: column, state: .unavailable, text: "1", data: "\(String(char)) - \(column)")
+                    return Seat(row: row, column: column, state: .unavailable, text: "1",
+                            data: "\(String(char)) - \(column)")
                 }
             default:
                 let char = Character(UnicodeScalar(65 + row)!)
-                return Seat(row: row, column: column, state: (row + column) % 5 == 0 ? .unavailable : .available, text: "1", data: "\(String(char)) - \(column)")
+                return Seat(row: row, column: column, state: (row + column) % 5 == 0 ? .unavailable : .available,
+                        text: "1", data: "\(String(char)) - \(column)")
             }
         }
     }
-    
+
     func getGuideTextFor(_ row: Int) -> String {
         switch row {
         case 0, 3, 4, 6, 7, 11, 12:
