@@ -20,4 +20,8 @@ extension UIFont {
     static var seat: UIFont {
         return systemFont(ofSize: 7)
     }
+    
+    static var titleSeat: UIFont {
+        return systemFont(ofSize: 10, weight: UIFontWeightHeavy)
+    }
 }
