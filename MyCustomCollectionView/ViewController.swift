@@ -56,7 +56,7 @@ extension ViewController: CinemaSeatLayoutDataSource {
     }
 
     func cinemaSeatLayout(_ cinemaSeatLayout: CinemaSeatLayout, guideTextFor row: Int) -> String {
-        return viewModel.getGuideTextFor(guideTextForRow)
+        return viewModel.getGuideTextFor(row)
     }
 
 }
